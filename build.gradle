@@ -2,11 +2,35 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.diffplug.spotless' version '7.2.1'
 }
 
 group = 'com.practice'
 version = '0.0.1-SNAPSHOT'
 description = 'spring_mini_project_01_group01'
+
+spotless {
+    java {
+        googleJavaFormat() // Or another popular style like prettier, eclipse, etc.
+    }
+}
+
+tasks.register("installGitHooks", Copy) {
+    from("$rootDir/scripts/pre-commit.sh") {
+        rename { "pre-commit" }
+    }
+    from("$rootDir/scripts/commit-msg.sh") {
+        rename { "commit-msg" }
+    }
+    into("$rootDir/.git/hooks")
+
+    filesMatching("*") {
+        mode = 0755
+    }
+    description = "Installs the git hooks from the scripts directory."
+}
+
+
 
 java {
     toolchain {
