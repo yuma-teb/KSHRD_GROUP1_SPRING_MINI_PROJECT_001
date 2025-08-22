@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserCreateRequest request) {
-        return ResponseEntity.ok(request);
-
-    }
+  @PostMapping("/register")
+  public ResponseEntity<?> register(@RequestBody UserCreateRequest request) {
+    return ResponseEntity.ok(request);
+  }
 }
