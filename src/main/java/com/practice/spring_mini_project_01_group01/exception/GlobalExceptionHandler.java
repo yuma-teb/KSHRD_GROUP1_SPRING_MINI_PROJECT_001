@@ -1,6 +1,5 @@
 package com.practice.spring_mini_project_01_group01.exception;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
@@ -36,28 +35,29 @@ public class GlobalExceptionHandler {
   }
 
   // --- CONFLICT (409) ---
-  @ExceptionHandler({DuplicateRecord.class, EmailAlreadyExistException.class})
-  public ProblemDetail handleConflictExceptions(RuntimeException ex, WebRequest request) {
-    ProblemDetail problemDetail =
-        createProblemDetail(HttpStatus.CONFLICT, ex.getMessage(), request);
-    problemDetail.setTitle("Conflict");
-    return problemDetail;
-  }
+  //  @ExceptionHandler({DuplicateRecord.class, EmailAlreadyExistException.class})
+  //  public ProblemDetail handleConflictExceptions(RuntimeException ex, WebRequest request) {
+  //    ProblemDetail problemDetail =
+  //        createProblemDetail(HttpStatus.CONFLICT, ex.getMessage(), request);
+  //    problemDetail.setTitle("Conflict");
+  //    return problemDetail;
+  //  }
 
   // --- BAD REQUEST (400) ---
   // Consolidated multiple bad-request type exceptions
-  @ExceptionHandler({
-    BadRequestException.class,
-    GithubOauthException.class,
-    GithubApiException.class,
-    IllegalArgumentException.class
-  })
-  public ProblemDetail handleGenericBadRequestExceptions(RuntimeException ex, WebRequest request) {
-    ProblemDetail problemDetail =
-        createProblemDetail(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
-    problemDetail.setTitle("Bad Request");
-    return problemDetail;
-  }
+  //  @ExceptionHandler({
+  //    BadRequestException.class,
+  //    GithubOauthException.class,
+  //    GithubApiException.class,
+  //    IllegalArgumentException.class
+  //  })
+  //  public ProblemDetail handleGenericBadRequestExceptions(RuntimeException ex, WebRequest
+  // request) {
+  //    ProblemDetail problemDetail =
+  //        createProblemDetail(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+  //    problemDetail.setTitle("Bad Request");
+  //    return problemDetail;
+  //  }
 
   // --- NOT FOUND (404) ---
   @ExceptionHandler(NotFoundException.class)
@@ -78,14 +78,14 @@ public class GlobalExceptionHandler {
     return problemDetail;
   }
 
-  @ExceptionHandler(ExpiredJwtException.class)
-  public ProblemDetail handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
-    ProblemDetail problemDetail =
-        createProblemDetail(
-            HttpStatus.UNAUTHORIZED, "Your session has expired. Please log in again.", request);
-    problemDetail.setTitle("Session Expired");
-    return problemDetail;
-  }
+  //  @ExceptionHandler(ExpiredJwtException.class)
+  //  public ProblemDetail handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
+  //    ProblemDetail problemDetail =
+  //        createProblemDetail(
+  //            HttpStatus.UNAUTHORIZED, "Your session has expired. Please log in again.", request);
+  //    problemDetail.setTitle("Session Expired");
+  //    return problemDetail;
+  //  }
 
   // --- VALIDATION ERRORS (400) ---
   // Harmonized validation error responses
