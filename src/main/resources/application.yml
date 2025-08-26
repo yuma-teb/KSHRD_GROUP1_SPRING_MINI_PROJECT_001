@@ -12,3 +12,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+jwt:
+  secret:
+    key: ${JWT_SECRET}
+    expiration:
+      ms: ${ACCESS_TOKEN_EXPIRE}
+    refresh:
+      expiration:
+        ms: ${REFRESH_TOKEN_EXPIRE}

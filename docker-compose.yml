@@ -26,6 +26,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db_hw_compose:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 2003
+      JWT_SECRET: a9f8V7+9Q0k3Hsgkz9qkU88hr2S2UayKjPLuI9r0fRk=
+      ACCESS_TOKEN_EXPIRE: 3600000
+      REFRESH_TOKEN_EXPIRE: 604800000
     networks:
       - spring-net
 volumes:

@@ -34,7 +34,5 @@ public class UserCreationRequest {
   @Size(max = 255, message = "Address cannot be longer than 255 characters.")
   private String address;
 
-  @NotBlank(message = "Role cannot be empty.")
-  @Pattern(regexp = "AUTHOR|READER", message = "Role must be one of the following: AUTHOR, READER.")
   private UserRole role;
 }

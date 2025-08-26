@@ -1,5 +1,6 @@
 package com.practice.spring_mini_project_01_group01.exception;
 
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,12 +61,29 @@ public class GlobalExceptionHandler {
   //    return problemDetail;
   //  }
 
+  @ExceptionHandler(BadCredentialsException.class)
+  public ProblemDetail handleBadCredentials(BadCredentialsException ex, WebRequest request) {
+    ProblemDetail problemDetail =
+        createProblemDetail(HttpStatus.UNAUTHORIZED, "Invalid username or password.", request);
+    problemDetail.setTitle("Authentication Failed");
+    return problemDetail;
+  }
+
   // --- NOT FOUND (404) ---
   @ExceptionHandler(NotFoundException.class)
   public ProblemDetail handleNotFoundException(NotFoundException ex, WebRequest request) {
     ProblemDetail problemDetail =
         createProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     problemDetail.setTitle("Resource Not Found");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(MalformedJwtException.class)
+  public ProblemDetail handleMalformedJwtException(MalformedJwtException ex, WebRequest request) {
+    ProblemDetail problemDetail =
+        createProblemDetail(
+            HttpStatus.UNAUTHORIZED, "Invalid authentication token. Please log in again.", request);
+    problemDetail.setTitle("Invalid Token");
     return problemDetail;
   }
 
