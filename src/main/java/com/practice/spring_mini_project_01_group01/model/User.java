@@ -4,7 +4,9 @@ import com.practice.spring_mini_project_01_group01.common.enums.UserRole;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,6 +47,11 @@ public class User implements UserDetails {
     // We wrap the user's role in a SimpleGrantedAuthority for Spring Security.
     return List.of(new SimpleGrantedAuthority(role.name()));
   }
+
+  // The one-to-many relationship with Article, mappedBy specifies the field in the Article entity
+  // that owns the relationship.
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Article> articles = new HashSet<>();
 
   @Override
   public String getUsername() {
