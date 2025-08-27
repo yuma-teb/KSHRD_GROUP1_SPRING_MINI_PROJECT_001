@@ -2,9 +2,12 @@ spring:
   application:
     name: spring_mini_project_01_group01
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    username: ${SPRING_DATASOURCE_USERNAME}
+    url: jdbc:postgresql://localhost:5432/postgres
+    password: 123
+    username: postgres
+  #    url: ${SPRING_DATASOURCE_URL}
+#    password: ${SPRING_DATASOURCE_PASSWORD}
+#    username: ${SPRING_DATASOURCE_USERNAME}
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,3 +15,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+jwt:
+  secret:
+    key: ${JWT_SECRET}
+    expiration:
+      ms: ${ACCESS_TOKEN_EXPIRE}
+    refresh:
+      expiration:
+        ms: ${REFRESH_TOKEN_EXPIRE}

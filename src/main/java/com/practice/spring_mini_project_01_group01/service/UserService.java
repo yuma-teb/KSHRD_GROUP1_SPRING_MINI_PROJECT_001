@@ -1,3 +1,5 @@
 package com.practice.spring_mini_project_01_group01.service;
 
-public interface UserService {}
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+public interface UserService extends UserDetailsService {}

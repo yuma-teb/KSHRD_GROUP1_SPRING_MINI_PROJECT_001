@@ -1,6 +1,7 @@
 package com.practice.spring_mini_project_01_group01.model;
 
-import com.practice.spring_mini_project_01_group01.model.dto.response.CommentResponse;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.practice.spring_mini_project_01_group01.model.dto.commet.CommentResponse;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -17,15 +18,21 @@ public class Comment {
 
   private String content;
 
-  private Long articleId;
+  @ManyToOne
+  @JoinColumn(name = "article_id")
+  @JsonBackReference
+  private Article article;
 
-  private Long userId;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "user_id")
+  @JsonBackReference
+  private User user;
 
   private LocalDateTime createdAt;
 
   private LocalDateTime updatedAt;
 
   public CommentResponse toResponse() {
-    return new CommentResponse(null, this.content, this.createdAt, this.updatedAt, this.userId);
+    return new CommentResponse(null, this.content, this.createdAt, this.updatedAt, null);
   }
 }

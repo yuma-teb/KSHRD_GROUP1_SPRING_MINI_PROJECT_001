@@ -1,4 +1,4 @@
-package com.practice.spring_mini_project_01_group01.model.dto.response;
+package com.practice.spring_mini_project_01_group01.model.dto.commet;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
