@@ -3,6 +3,7 @@ package com.practice.spring_mini_project_01_group01.controller;
 import com.practice.spring_mini_project_01_group01.dto.auth.AuthResponse;
 import com.practice.spring_mini_project_01_group01.dto.auth.LoginRequest;
 import com.practice.spring_mini_project_01_group01.dto.auth.RefreshTokenRequest;
+import com.practice.spring_mini_project_01_group01.dto.common.CustomResponse;
 import com.practice.spring_mini_project_01_group01.dto.user.UserCreationRequest;
 import com.practice.spring_mini_project_01_group01.service.AuthService;
 import jakarta.validation.Valid;
@@ -21,8 +22,16 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
-  public ResponseEntity<AuthResponse> register(@Valid @RequestBody UserCreationRequest request) {
-    return ResponseEntity.ok(authService.register(request));
+  public ResponseEntity<CustomResponse<?>> register(
+      @Valid @RequestBody UserCreationRequest request) {
+    CustomResponse<Object> response =
+        CustomResponse.builder()
+            .payload(authService.register(request))
+            .message("User registered successfully")
+            .success(true)
+            .build();
+
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/login")

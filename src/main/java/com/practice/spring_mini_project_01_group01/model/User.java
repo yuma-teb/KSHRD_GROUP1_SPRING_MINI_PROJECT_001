@@ -2,7 +2,7 @@ package com.practice.spring_mini_project_01_group01.model;
 
 import com.practice.spring_mini_project_01_group01.common.enums.UserRole;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import lombok.*;
@@ -36,9 +36,9 @@ public class User implements UserDetails {
   private String address;
   private String phoneNumber;
 
-  @Builder.Default private LocalDate createdAt = LocalDate.now();
+  @Builder.Default private LocalDateTime createdAt = LocalDateTime.now();
 
-  private LocalDate updatedAt;
+  private LocalDateTime updatedAt;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
