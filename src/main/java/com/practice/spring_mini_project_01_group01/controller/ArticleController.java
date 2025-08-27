@@ -6,6 +6,7 @@ import com.practice.spring_mini_project_01_group01.service.ArticleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,7 @@ public class ArticleController {
 
   // Create article
   @PostMapping
+  @PreAuthorize("hasAuthority('AUTHOR')")
   public ArticleResponse createArticle(@RequestBody ArticleRequest articleRequest) {
     ArticleResponse savedArticle = articleService.save(articleRequest);
     return savedArticle;
