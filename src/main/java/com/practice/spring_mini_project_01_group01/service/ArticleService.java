@@ -1,11 +1,15 @@
 package com.practice.spring_mini_project_01_group01.service;
 
+import com.practice.spring_mini_project_01_group01.common.enums.ArticleProperty;
+import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleRequest;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 public interface ArticleService {
   ArticleResponse save(ArticleRequest articleRequest);
 
-  List<ArticleResponse> findAll();
+  APIResponse<List<ArticleResponse>> findAll(
+      int page, int size, ArticleProperty articleProperty, Sort.Direction direction);
 }

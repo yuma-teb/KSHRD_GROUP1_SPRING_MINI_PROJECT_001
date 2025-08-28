@@ -1,11 +1,14 @@
 package com.practice.spring_mini_project_01_group01.controller;
 
+import com.practice.spring_mini_project_01_group01.common.enums.ArticleProperty;
+import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleRequest;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
 import com.practice.spring_mini_project_01_group01.service.ArticleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +30,11 @@ public class ArticleController {
 
   // Get Article
   @GetMapping
-  public List<ArticleResponse> getAllArticles() {
-    return articleService.findAll();
+  public APIResponse<List<ArticleResponse>> getAllArticles(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam ArticleProperty articleProperty,
+      @RequestParam Sort.Direction direction) {
+    return articleService.findAll(page, size, articleProperty, direction);
   }
 }

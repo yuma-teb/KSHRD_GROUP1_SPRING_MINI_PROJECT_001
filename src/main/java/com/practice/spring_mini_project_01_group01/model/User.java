@@ -48,8 +48,6 @@ public class User implements UserDetails {
     return List.of(new SimpleGrantedAuthority(role.name()));
   }
 
-  // The one-to-many relationship with Article, mappedBy specifies the field in the Article entity
-  // that owns the relationship.
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Article> articles = new HashSet<>();
 
