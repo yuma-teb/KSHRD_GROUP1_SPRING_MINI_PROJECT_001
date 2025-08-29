@@ -1,6 +1,7 @@
 package com.practice.spring_mini_project_01_group01.dto.category;
 
 import com.practice.spring_mini_project_01_group01.model.Category;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class CategoryRequest {
       regexp = "^[a-zA-Z0-9_-]+$",
       message =
           "Category name can only contain letters, numbers, underscores, or hyphens (no spaces or emojis)")
+  @Schema(defaultValue = "Meme")
   private String categoryName;
 
   public Category toEntity() {
