@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +85,25 @@ public class GlobalExceptionHandler {
     ProblemDetail problemDetail =
         createProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     problemDetail.setTitle("Resource Not Found");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+    // Default response
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(
+            HttpStatus.CONFLICT, "Duplicate value violates unique constraint.");
+
+    problemDetail.setTitle("Data Integrity Violation");
+    problemDetail.setProperty("errorCode", "EMAIL_ALREADY_EXISTS");
+
+    // Optional: extract the offending field (email)
+    String message = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+    if (message != null && message.contains("email")) {
+      problemDetail.setDetail("Email already exists in the system.");
+    }
+
     return problemDetail;
   }
 
