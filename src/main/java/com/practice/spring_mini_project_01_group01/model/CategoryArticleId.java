@@ -16,7 +16,6 @@ public class CategoryArticleId implements Serializable {
   private Long articleId;
   private Long categoryId;
 
-  // You must override equals() and hashCode() for composite keys
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

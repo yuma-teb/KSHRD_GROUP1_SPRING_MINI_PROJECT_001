@@ -1,9 +1,12 @@
 package com.practice.spring_mini_project_01_group01.service.impl;
 
 import com.practice.spring_mini_project_01_group01.common.enums.ArticleProperty;
+import com.practice.spring_mini_project_01_group01.common.utils.AuthUtil;
 import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleRequest;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
+import com.practice.spring_mini_project_01_group01.exception.NotFoundException;
 import com.practice.spring_mini_project_01_group01.model.*;
 import com.practice.spring_mini_project_01_group01.repository.ArticleRepository;
 import com.practice.spring_mini_project_01_group01.repository.CategoryRepository;
@@ -24,14 +27,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ArticleServiceImpl implements ArticleService {
 
   private final ArticleRepository articleRepository;
   private final CategoryRepository categoryRepository;
+  private final AuthUtil authUtil;
 
-  @Transactional
   @Override
   public ArticleResponse save(ArticleRequest articleRequest) {
+
+    if (!authUtil.getCurrentUserRole().equalsIgnoreCase("AUTHOR")) {
+      throw new NotFoundException("Not an Author");
+    }
+
     User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     Article article =
@@ -39,24 +48,21 @@ public class ArticleServiceImpl implements ArticleService {
             .title(articleRequest.getTitle())
             .description(articleRequest.getDescription())
             .user(currentUser)
+            .articleCategories(new ArrayList<>())
             .build();
-
-    article.setArticleCategories(new ArrayList<>());
 
     Article savedArticle = articleRepository.save(article);
 
     if (articleRequest.getCategoryIds() != null && !articleRequest.getCategoryIds().isEmpty()) {
       List<Category> categories = categoryRepository.findAllById(articleRequest.getCategoryIds());
-      categories.forEach(
-          category -> {
-            CategoryArticleId id =
-                new CategoryArticleId(savedArticle.getArticleId(), category.getId());
+      for (Category category : categories) {
+        CategoryArticleId id = new CategoryArticleId(savedArticle.getArticleId(), category.getId());
+        CategoryArticle categoryArticle =
+            CategoryArticle.builder().id(id).article(savedArticle).category(category).build();
+        savedArticle.getArticleCategories().add(categoryArticle);
+      }
 
-            CategoryArticle categoryArticle =
-                CategoryArticle.builder().id(id).article(savedArticle).category(category).build();
-
-            savedArticle.getArticleCategories().add(categoryArticle);
-          });
+      savedArticle = articleRepository.saveAndFlush(savedArticle);
     }
 
     return ArticleResponse.fromArticle(savedArticle);
@@ -80,5 +86,43 @@ public class ArticleServiceImpl implements ArticleService {
 
     return new APIResponse<>(
         "Get all articles successfully.", articleResponses, HttpStatus.OK, LocalDateTime.now());
+  }
+
+  @Override
+  public APIResponse<ArticleResponse> addComment(Long articleId, CommentRequest commentRequest) {
+    return null;
+  }
+
+  @Override
+  public APIResponse<Void> deteleArticle(Long articleId) {
+
+    if (!authUtil.getCurrentUserRole().equalsIgnoreCase("AUTHOR")) {
+      throw new NotFoundException("Not an Author");
+    }
+
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new RuntimeException("Article not found with ID: " + articleId));
+
+    articleRepository.delete(article);
+
+    // Return a success response
+    return new APIResponse<>(
+        "Article deleted successfully", null, HttpStatus.OK, LocalDateTime.now());
+  }
+
+  @Override
+  public APIResponse<ArticleResponse> getArticleById(Long articleId) {
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new NotFoundException("Article not found with ID: " + articleId));
+
+    ArticleResponse articleResponse = ArticleResponse.fromArticle(article);
+
+    // Return as APIResponse
+    return new APIResponse<>(
+        "Get article successfully", articleResponse, HttpStatus.OK, LocalDateTime.now());
   }
 }
