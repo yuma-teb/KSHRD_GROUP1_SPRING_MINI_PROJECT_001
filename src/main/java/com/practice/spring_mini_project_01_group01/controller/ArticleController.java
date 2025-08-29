@@ -10,6 +10,7 @@ import com.practice.spring_mini_project_01_group01.service.ArticleService;
 import com.practice.spring_mini_project_01_group01.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class ArticleController {
 
   // Create article
   @PostMapping
-  public ArticleResponse createArticle(@RequestBody ArticleRequest articleRequest) {
+  public ArticleResponse createArticle(@Valid @RequestBody ArticleRequest articleRequest) {
     return articleService.save(articleRequest);
   }
 
