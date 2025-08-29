@@ -60,6 +60,9 @@ public class ArticleServiceImpl implements ArticleService {
         CategoryArticle categoryArticle =
             CategoryArticle.builder().id(id).article(savedArticle).category(category).build();
         savedArticle.getArticleCategories().add(categoryArticle);
+
+        category.setAmountOfArticle(category.getAmountOfArticle() + 1);
+        categoryRepository.save(category);
       }
 
       savedArticle = articleRepository.saveAndFlush(savedArticle);
@@ -105,6 +108,11 @@ public class ArticleServiceImpl implements ArticleService {
             .findById(articleId)
             .orElseThrow(() -> new RuntimeException("Article not found with ID: " + articleId));
 
+    for (CategoryArticle ca : article.getArticleCategories()) {
+      Category category = ca.getCategory();
+      category.setAmountOfArticle(Math.max(0, category.getAmountOfArticle() - 1));
+      categoryRepository.save(category);
+    }
     articleRepository.delete(article);
 
     // Return a success response
@@ -124,5 +132,80 @@ public class ArticleServiceImpl implements ArticleService {
     // Return as APIResponse
     return new APIResponse<>(
         "Get article successfully", articleResponse, HttpStatus.OK, LocalDateTime.now());
+  }
+
+  @Override
+  @Transactional
+  public ArticleResponse updateArticle(Long articleId, ArticleRequest articleRequest) {
+    // Role check
+    if (!authUtil.getCurrentUserRole().equalsIgnoreCase("AUTHOR")) {
+      throw new NotFoundException("Not an Author");
+    }
+
+    // Load existing article
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new NotFoundException("Article not found with ID: " + articleId));
+
+    // Update basic fields
+    article.setTitle(articleRequest.getTitle());
+    article.setDescription(articleRequest.getDescription());
+
+    // Compute existing and new category IDs
+    List<Long> existingCategoryIds =
+        article.getArticleCategories().stream()
+            .map(ca -> ca.getCategory().getId())
+            .toList(); // existing id from db
+
+    List<Long> newCategoryIds =
+        articleRequest.getCategoryIds() != null
+            ? articleRequest.getCategoryIds()
+            : List.of(); // categoryId from request
+
+    //  Remove associations that are no longer needed like links from each category to article
+    article
+        .getArticleCategories()
+        .removeIf(
+            ca -> {
+              Long categoryId = ca.getCategory().getId();
+              if (!newCategoryIds.contains(categoryId)) {
+                // Decrease amountOfArticles safely
+                Category category = ca.getCategory();
+                category.setAmountOfArticle(Math.max(0, category.getAmountOfArticle() - 1));
+
+                categoryRepository.save(category);
+
+                // Detach
+                ca.setArticle(null);
+                ca.setCategory(null);
+                return true;
+              }
+              return false;
+            });
+
+    // 6 Add only new associations
+    List<Long> toAdd =
+        newCategoryIds.stream().filter(id -> !existingCategoryIds.contains(id)).toList();
+
+    if (!toAdd.isEmpty()) {
+      List<Category> categoriesToAdd = categoryRepository.findAllById(toAdd);
+      for (Category category : categoriesToAdd) {
+        CategoryArticleId id = new CategoryArticleId(article.getArticleId(), category.getId());
+        CategoryArticle newCA =
+            CategoryArticle.builder().id(id).article(article).category(category).build();
+        article.getArticleCategories().add(newCA);
+
+        // Increase amountOfArticles
+        category.setAmountOfArticle(category.getAmountOfArticle() + 1);
+
+        categoryRepository.save(category);
+      }
+    }
+
+    // Save and return
+    Article updatedArticle = articleRepository.saveAndFlush(article);
+
+    return ArticleResponse.fromArticle(updatedArticle);
   }
 }

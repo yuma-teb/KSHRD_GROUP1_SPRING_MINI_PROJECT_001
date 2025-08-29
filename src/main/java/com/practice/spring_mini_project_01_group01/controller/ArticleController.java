@@ -7,9 +7,11 @@ import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
 import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
 import com.practice.spring_mini_project_01_group01.service.ArticleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -54,5 +56,15 @@ public class ArticleController {
   @GetMapping("/{articleId}")
   public APIResponse<ArticleResponse> getArticleById(@PathVariable("articleId") Long articleId) {
     return articleService.getArticleById(articleId);
+  }
+
+  @PutMapping("/{articleId}")
+  public APIResponse<ArticleResponse> updateArticle(
+      @PathVariable Long articleId, @RequestBody ArticleRequest articleRequest) {
+
+    ArticleResponse response = articleService.updateArticle(articleId, articleRequest);
+
+    return new APIResponse<>(
+        "Category updated successfully", response, HttpStatus.OK, LocalDateTime.now());
   }
 }
