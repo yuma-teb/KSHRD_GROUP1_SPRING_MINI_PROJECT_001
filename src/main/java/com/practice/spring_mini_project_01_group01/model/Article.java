@@ -1,5 +1,6 @@
 package com.practice.spring_mini_project_01_group01.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class Article {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String title;
@@ -28,5 +29,6 @@ public class Article {
   private User user;
 
   @OneToMany(mappedBy = "article")
+  @JsonManagedReference
   private List<Comment> comments;
 }
