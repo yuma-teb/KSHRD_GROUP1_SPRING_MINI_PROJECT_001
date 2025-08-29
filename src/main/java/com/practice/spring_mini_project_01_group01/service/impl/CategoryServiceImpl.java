@@ -120,6 +120,19 @@ public class CategoryServiceImpl implements CategoryService {
       throw new RuntimeException("Category not found with id " + id);
     }
 
+    Category category =
+        categoryRepository
+            .findById(id)
+            .orElseThrow(() -> new NotFoundException("Category not found with id " + id));
+
+    // Prevent deletion if categories is linked to any article
+    if (!category.getCategoryArticles().isEmpty()) {
+      throw new RuntimeException(
+          "Cannot delete category '"
+              + category.getCategoryName()
+              + "' because it is linked to one or more articles");
+    }
+
     categoryRepository.deleteById(id);
 
     return "Deleted Category!";

@@ -6,6 +6,7 @@ import com.practice.spring_mini_project_01_group01.dto.category.CategoryRequest;
 import com.practice.spring_mini_project_01_group01.dto.category.CategoryResponse;
 import com.practice.spring_mini_project_01_group01.service.CategoryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ public class CategoryController {
 
   @PostMapping()
   private APIResponse<CategoryResponse> createCategory(
-      @RequestBody CategoryRequest categoryRequest) {
+      @Valid @RequestBody CategoryRequest categoryRequest) {
     return categoryService.createCategory(categoryRequest);
   }
 
@@ -50,7 +51,7 @@ public class CategoryController {
 
   @PutMapping("/{id}")
   public APIResponse<CategoryResponse> updateCategory(
-      @PathVariable Long id, @RequestBody CategoryRequest request) {
+      @PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
     CategoryResponse updated = categoryService.updateCategory(id, request);
 
     return new APIResponse<>(

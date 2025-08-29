@@ -1,6 +1,8 @@
 package com.practice.spring_mini_project_01_group01.dto.category;
 
 import com.practice.spring_mini_project_01_group01.model.Category;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +11,11 @@ import lombok.Setter;
 @Setter
 public class CategoryRequest {
 
+  @NotBlank(message = "Category name cannot be empty")
+  @Pattern(
+      regexp = "^[a-zA-Z0-9_-]+$",
+      message =
+          "Category name can only contain letters, numbers, underscores, or hyphens (no spaces or emojis)")
   private String categoryName;
 
   public Category toEntity() {

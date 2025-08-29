@@ -6,13 +6,13 @@ import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
@@ -178,5 +178,17 @@ public class GlobalExceptionHandler {
             request);
     problemDetail.setTitle("Internal Server Error");
     return problemDetail;
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Object> handleMalformedJson(HttpMessageNotReadableException ex) {
+    // Customize your response
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.BAD_REQUEST.value());
+    body.put("error", "Malformed JSON request");
+    body.put("message", ex.getMostSpecificCause().getMessage());
+
+    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
   }
 }
