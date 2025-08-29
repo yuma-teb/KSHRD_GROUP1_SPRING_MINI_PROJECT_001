@@ -20,5 +20,4 @@ jwt:
     refresh:
       expiration:
         ms: ${REFRESH_TOKEN_EXPIRE}
-server:
-  port: 8081
+
