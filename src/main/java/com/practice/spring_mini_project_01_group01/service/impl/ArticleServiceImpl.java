@@ -103,7 +103,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     commentService.createComment(article, commentRequest);
 
-    List<Comment> comments = commentRepository.findByUserId(authUtil.getCurrentUser().getId());
+    List<Comment> comments =
+        commentRepository.findByUserIdAndArticleId(authUtil.getCurrentUser().getId(), articleId);
 
     CommentArticleResponse response = new CommentArticleResponse();
     response.setArticleResponse(article.getArticleResponse());
@@ -225,5 +226,23 @@ public class ArticleServiceImpl implements ArticleService {
     Article updatedArticle = articleRepository.saveAndFlush(article);
 
     return ArticleResponse.fromArticle(updatedArticle);
+  }
+
+  @Override
+  public List<CommentArticleResponse> findCommentsByArticleId(Long articleId) {
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new NotFoundException("Article not found with ID: " + articleId));
+
+    List<Comment> comments = commentRepository.findCommentsByArticle_ArticleId(articleId);
+
+    CommentArticleResponse response = new CommentArticleResponse();
+
+    response.setArticleResponse(article.getArticleResponse());
+    response.setComments(
+        comments.stream().map(CommentResponse::fromComment).collect(Collectors.toList()));
+
+    return List.of(response);
   }
 }

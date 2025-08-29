@@ -74,4 +74,12 @@ public class ArticleController {
     return new APIResponse<>(
         "Category updated successfully", response, HttpStatus.OK, LocalDateTime.now());
   }
+
+  @GetMapping("/{articleId}/comments")
+  public APIResponse<List<CommentArticleResponse>> getCommentsArticle(
+      @PathVariable("articleId") Long articleId) {
+    List<CommentArticleResponse> response = articleService.findCommentsByArticleId(articleId);
+    return new APIResponse<>(
+        "Get All Comments Successfully", response, HttpStatus.OK, LocalDateTime.now());
+  }
 }

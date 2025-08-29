@@ -22,4 +22,6 @@ public interface ArticleService {
   APIResponse<ArticleResponse> getArticleById(Long articleId);
 
   ArticleResponse updateArticle(Long articleId, ArticleRequest articleRequest);
+
+  List<CommentArticleResponse> findCommentsByArticleId(Long articleId);
 }
