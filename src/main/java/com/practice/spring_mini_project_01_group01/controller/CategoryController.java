@@ -5,6 +5,7 @@ import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.category.CategoryRequest;
 import com.practice.spring_mini_project_01_group01.dto.category.CategoryResponse;
 import com.practice.spring_mini_project_01_group01.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
@@ -23,12 +24,14 @@ public class CategoryController {
   private final CategoryService categoryService;
 
   @PostMapping()
+  @Operation(summary = "Create new category. can be used by only AUTHOR role")
   private APIResponse<CategoryResponse> createCategory(
       @Valid @RequestBody CategoryRequest categoryRequest) {
     return categoryService.createCategory(categoryRequest);
   }
 
   @GetMapping
+  @Operation(summary = "Get all categories. can be used by only AUTHOR role")
   public APIResponse<Page<CategoryResponse>> getAllCategory(
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size,
@@ -42,6 +45,7 @@ public class CategoryController {
   }
 
   @GetMapping("/{id}")
+  @Operation(summary = "Get category by id. can be used by only AUTHOR role")
   public APIResponse<CategoryResponse> getCategoryById(@PathVariable Long id) {
     CategoryResponse response = categoryService.getCategoryById(id);
 
@@ -50,6 +54,7 @@ public class CategoryController {
   }
 
   @PutMapping("/{id}")
+  @Operation(summary = "Update category. can be used by only AUTHOR role")
   public APIResponse<CategoryResponse> updateCategory(
       @PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
     CategoryResponse updated = categoryService.updateCategory(id, request);
@@ -59,6 +64,7 @@ public class CategoryController {
   }
 
   @DeleteMapping("/{id}")
+  @Operation(summary = "Delete category. can be used by only AUTHOR role")
   public APIResponse<String> deleteCategory(@PathVariable Long id) {
     String deleteCategory = categoryService.deleteCategory(id);
 

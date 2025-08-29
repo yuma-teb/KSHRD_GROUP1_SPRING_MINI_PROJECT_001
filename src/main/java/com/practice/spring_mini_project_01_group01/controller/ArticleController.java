@@ -29,12 +29,14 @@ public class ArticleController {
 
   // Create article
   @PostMapping
+  @Operation(summary = "Create new article. can be used by only AUTHOR role")
   public ArticleResponse createArticle(@Valid @RequestBody ArticleRequest articleRequest) {
     return articleService.save(articleRequest);
   }
 
   // Get Article
   @GetMapping
+  @Operation(summary = "Get all articles. can be used by all roles")
   public APIResponse<List<ArticleResponse>> getAllArticles(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
@@ -55,17 +57,20 @@ public class ArticleController {
 
   // Delete article
   @DeleteMapping("/{articleId}")
+  @Operation(summary = "Delete existing article. can be used by only AUTHOR role")
   public APIResponse<Void> deleteArticle(@PathVariable("articleId") Long articleId) {
     return articleService.deteleArticle(articleId);
   }
 
   // Get article by id
   @GetMapping("/{articleId}")
+  @Operation(summary = "Get article by article id. can be used by all roles")
   public APIResponse<ArticleResponse> getArticleById(@PathVariable("articleId") Long articleId) {
     return articleService.getArticleById(articleId);
   }
 
   @PutMapping("/{articleId}")
+  @Operation(summary = "Update existing article. can be used by only AUTHOR role")
   public APIResponse<ArticleResponse> updateArticle(
       @PathVariable Long articleId, @RequestBody ArticleRequest articleRequest) {
 
@@ -76,6 +81,7 @@ public class ArticleController {
   }
 
   @GetMapping("/{articleId}/comments")
+  @Operation(summary = "Get all comments by article id, can be used by all roles")
   public APIResponse<List<CommentArticleResponse>> getCommentsArticle(
       @PathVariable("articleId") Long articleId) {
     List<CommentArticleResponse> response = articleService.findCommentsByArticleId(articleId);
