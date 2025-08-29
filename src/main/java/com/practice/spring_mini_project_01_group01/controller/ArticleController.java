@@ -60,12 +60,4 @@ public class ArticleController {
   public APIResponse<ArticleResponse> getArticleById(@PathVariable("articleId") Long articleId) {
     return articleService.getArticleById(articleId);
   }
-
-  // Update article by ID
-  @PutMapping("/{articleId}")
-  @Operation(summary = "Update exiting article. can be used by only AUTHOR role")
-  public APIResponse<ArticleResponse> updateArticleById(
-      @PathVariable("articleId") Long articleId, @RequestBody ArticleRequest articleRequest) {
-    return articleService.updateArticleById(articleId, articleRequest);
-  }
 }

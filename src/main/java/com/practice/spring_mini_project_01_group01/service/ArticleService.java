@@ -19,6 +19,4 @@ public interface ArticleService {
   APIResponse<Void> deteleArticle(Long articleId);
 
   APIResponse<ArticleResponse> getArticleById(Long articleId);
-
-  APIResponse<ArticleResponse> updateArticleById(Long articleId, ArticleRequest articleRequest);
 }

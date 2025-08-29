@@ -123,7 +123,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     articleRepository.delete(article);
 
-    // Return a success response
     return new APIResponse<>(
         "Article deleted successfully", null, HttpStatus.OK, LocalDateTime.now());
   }
@@ -137,55 +136,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     ArticleResponse articleResponse = ArticleResponse.fromArticle(article);
 
-    // Return as APIResponse
     return new APIResponse<>(
         "Get article successfully", articleResponse, HttpStatus.OK, LocalDateTime.now());
-  }
-
-  @Override
-  public APIResponse<ArticleResponse> updateArticleById(
-      Long articleId, ArticleRequest articleRequest) {
-    if (!authUtil.getCurrentUserRole().equalsIgnoreCase("AUTHOR")) {
-      throw new NotFoundException("Not an Author");
-    }
-
-    Article article =
-        articleRepository
-            .findById(articleId)
-            .orElseThrow(() -> new NotFoundException("Article not found with id: " + articleId));
-
-    article.setTitle(articleRequest.getTitle());
-    article.setDescription(articleRequest.getDescription());
-
-    if (articleRequest.getCategoryIds() != null) {
-      if (articleRequest.getCategoryIds().isEmpty()) {
-        throw new BadRequestException("At least one category is required");
-      }
-
-      List<Long> requestedIds = articleRequest.getCategoryIds();
-      List<Category> categories = categoryRepository.findAllById(requestedIds);
-
-      List<Long> foundIds = categories.stream().map(Category::getId).toList();
-      List<Long> missingIds = requestedIds.stream().filter(id -> !foundIds.contains(id)).toList();
-
-      if (!missingIds.isEmpty()) {
-        throw new NotFoundException("Categories not found: " + missingIds);
-      }
-
-      article.getArticleCategories().clear();
-
-      for (Category category : categories) {
-        CategoryArticleId id = new CategoryArticleId(article.getArticleId(), category.getId());
-        CategoryArticle categoryArticle =
-            CategoryArticle.builder().id(id).article(article).category(category).build();
-        article.getArticleCategories().add(categoryArticle);
-      }
-    }
-
-    Article updatedArticle = articleRepository.saveAndFlush(article);
-    ArticleResponse response = ArticleResponse.fromArticle(updatedArticle);
-
-    return new APIResponse<>(
-        "Article updated successfully", response, HttpStatus.OK, LocalDateTime.now());
   }
 }
