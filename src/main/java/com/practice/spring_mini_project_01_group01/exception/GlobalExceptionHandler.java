@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +61,13 @@ public class GlobalExceptionHandler {
   //    problemDetail.setTitle("Bad Request");
   //    return problemDetail;
   //  }
+
+  @ExceptionHandler(BadRequestException.class)
+  public ProblemDetail handleBadException(BadRequestException e) {
+    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    problemDetail.setProperty("timestamp", LocalDateTime.now());
+    return problemDetail;
+  }
 
   @ExceptionHandler(BadCredentialsException.class)
   public ProblemDetail handleBadCredentials(BadCredentialsException ex, WebRequest request) {
