@@ -2,6 +2,7 @@ package com.practice.spring_mini_project_01_group01.service.impl;
 
 import com.practice.spring_mini_project_01_group01.dto.auth.AuthResponse;
 import com.practice.spring_mini_project_01_group01.dto.auth.LoginRequest;
+import com.practice.spring_mini_project_01_group01.dto.common.CustomResponse;
 import com.practice.spring_mini_project_01_group01.dto.user.UserCreationRequest;
 import com.practice.spring_mini_project_01_group01.dto.user.UserMapper;
 import com.practice.spring_mini_project_01_group01.dto.user.UserResponse;
@@ -9,6 +10,8 @@ import com.practice.spring_mini_project_01_group01.model.User;
 import com.practice.spring_mini_project_01_group01.repository.UserRepository;
 import com.practice.spring_mini_project_01_group01.security.JwtService;
 import com.practice.spring_mini_project_01_group01.service.AuthService;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public AuthResponse login(LoginRequest request) {
+  public CustomResponse<AuthResponse> login(LoginRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -52,7 +55,12 @@ public class AuthServiceImpl implements AuthService {
     String accessToken = jwtService.generateToken(user);
     String refreshToken = jwtService.generateRefreshToken(user);
 
-    return AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+    return CustomResponse.<AuthResponse>builder()
+        .timestamp(Timestamp.valueOf(LocalDateTime.now()))
+        .success(true)
+        .message("Login successfully")
+        .payload(AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build())
+        .build();
   }
 
   @Override
