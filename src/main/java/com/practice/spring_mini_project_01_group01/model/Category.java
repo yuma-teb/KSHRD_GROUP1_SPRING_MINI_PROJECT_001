@@ -7,7 +7,9 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 @Entity
-@Table(name = "categories")
+@Table(
+    name = "categories",
+    uniqueConstraints = {@UniqueConstraint(columnNames = "category_name")})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,7 +22,7 @@ public class Category {
   @Column(name = "category_id")
   private Long id;
 
-  @Column(name = "category_name")
+  @Column(name = "category_name", nullable = false, unique = true)
   private String categoryName;
 
   @Column(name = "amount_of_article")
