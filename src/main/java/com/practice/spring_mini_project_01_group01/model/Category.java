@@ -2,7 +2,7 @@ package com.practice.spring_mini_project_01_group01.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -33,6 +33,9 @@ public class Category {
 
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
+
+  @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CategoryArticle> categoryArticles = new ArrayList<>();
 
   @Override
   public final boolean equals(Object o) {
