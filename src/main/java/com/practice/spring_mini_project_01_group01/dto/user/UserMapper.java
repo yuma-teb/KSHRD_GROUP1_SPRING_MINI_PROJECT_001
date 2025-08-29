@@ -7,6 +7,7 @@ public class UserMapper {
   public static UserResponse toUserDto(User user) {
     return UserResponse.builder()
         .userId(user.getId())
+        .username(user.getUsername())
         .email(user.getEmail())
         .phoneNumber(user.getPhoneNumber())
         .role(user.getRole())
