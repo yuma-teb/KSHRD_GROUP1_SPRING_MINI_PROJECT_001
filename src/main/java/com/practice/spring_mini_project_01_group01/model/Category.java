@@ -26,7 +26,7 @@ public class Category {
   private String categoryName;
 
   @Column(name = "amount_of_article")
-  private Integer amountOfArticle;
+  private Integer amountOfArticle = 0;
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
