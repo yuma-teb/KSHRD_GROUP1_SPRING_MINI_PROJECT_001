@@ -10,7 +10,7 @@ public class AuthUtil {
   public String getCurrentUserRole() {
     return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
         .getRole()
-        .name(); // if Role is an enum
+        .name();
   }
 
   public User getCurrentUser() {

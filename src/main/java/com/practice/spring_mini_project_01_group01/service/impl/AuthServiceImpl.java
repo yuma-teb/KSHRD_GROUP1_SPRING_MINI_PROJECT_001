@@ -3,6 +3,8 @@ package com.practice.spring_mini_project_01_group01.service.impl;
 import com.practice.spring_mini_project_01_group01.dto.auth.AuthResponse;
 import com.practice.spring_mini_project_01_group01.dto.auth.LoginRequest;
 import com.practice.spring_mini_project_01_group01.dto.user.UserCreationRequest;
+import com.practice.spring_mini_project_01_group01.dto.user.UserMapper;
+import com.practice.spring_mini_project_01_group01.dto.user.UserResponse;
 import com.practice.spring_mini_project_01_group01.model.User;
 import com.practice.spring_mini_project_01_group01.repository.UserRepository;
 import com.practice.spring_mini_project_01_group01.security.JwtService;
@@ -23,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
   private final AuthenticationManager authenticationManager;
 
   @Override
-  public AuthResponse register(UserCreationRequest request) {
+  public UserResponse register(UserCreationRequest request) {
     User user =
         User.builder()
             .username(request.getUsername())
@@ -33,12 +35,8 @@ public class AuthServiceImpl implements AuthService {
             .address(request.getAddress())
             .role(request.getRole())
             .build();
-    userRepository.save(user);
 
-    String accessToken = jwtService.generateToken(user);
-    String refreshToken = jwtService.generateRefreshToken(user);
-
-    return AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+    return UserMapper.toUserDto(userRepository.save(user));
   }
 
   @Override
