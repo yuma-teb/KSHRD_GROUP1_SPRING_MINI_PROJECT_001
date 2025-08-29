@@ -14,7 +14,7 @@ public interface ArticleService {
   APIResponse<List<ArticleResponse>> findAll(
       int page, int size, ArticleProperty articleProperty, Sort.Direction direction);
 
-  APIResponse<ArticleResponse> addComment(Long articleId, CommentRequest commentRequest);
+  ArticleResponse addComment(Long articleId, CommentRequest commentRequest);
 
   APIResponse<Void> deteleArticle(Long articleId);
 

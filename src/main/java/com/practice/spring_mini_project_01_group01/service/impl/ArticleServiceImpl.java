@@ -89,7 +89,7 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public APIResponse<ArticleResponse> addComment(Long articleId, CommentRequest commentRequest) {
+  public ArticleResponse addComment(Long articleId, CommentRequest commentRequest) {
     return null;
   }
 

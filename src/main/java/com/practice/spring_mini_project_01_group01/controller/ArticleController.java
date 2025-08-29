@@ -39,7 +39,7 @@ public class ArticleController {
 
   // Create comment specific article
   @PostMapping("/{articleId}/comments")
-  public APIResponse<ArticleResponse> createComment(
+  public ArticleResponse createComment(
       @PathVariable("articleId") Long articleId, @RequestBody CommentRequest commentRequest) {
     return articleService.addComment(articleId, commentRequest);
   }
