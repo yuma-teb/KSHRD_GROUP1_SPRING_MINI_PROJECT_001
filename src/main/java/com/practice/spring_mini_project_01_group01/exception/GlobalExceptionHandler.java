@@ -69,6 +69,15 @@ public class GlobalExceptionHandler {
     return problemDetail;
   }
 
+  // Bad request
+  @ExceptionHandler(BadRequestException.class)
+  public ProblemDetail handleBadRequest(BadRequestException ex, WebRequest request) {
+    ProblemDetail problemDetail =
+        createProblemDetail(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    problemDetail.setTitle("Bad Request");
+    return problemDetail;
+  }
+
   // --- NOT FOUND (404) ---
   @ExceptionHandler(NotFoundException.class)
   public ProblemDetail handleNotFoundException(NotFoundException ex, WebRequest request) {

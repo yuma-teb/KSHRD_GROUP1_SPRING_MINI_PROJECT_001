@@ -6,6 +6,7 @@ import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleRequest;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
 import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
+import com.practice.spring_mini_project_01_group01.exception.BadRequestException;
 import com.practice.spring_mini_project_01_group01.exception.NotFoundException;
 import com.practice.spring_mini_project_01_group01.model.*;
 import com.practice.spring_mini_project_01_group01.repository.ArticleRepository;
@@ -53,8 +54,23 @@ public class ArticleServiceImpl implements ArticleService {
 
     Article savedArticle = articleRepository.save(article);
 
-    if (articleRequest.getCategoryIds() != null && !articleRequest.getCategoryIds().isEmpty()) {
-      List<Category> categories = categoryRepository.findAllById(articleRequest.getCategoryIds());
+    if (articleRequest.getCategoryIds() != null) {
+
+      if (articleRequest.getCategoryIds() == null || articleRequest.getCategoryIds().isEmpty()) {
+        throw new BadRequestException("At least one category is required");
+      }
+
+      List<Long> requestedIds = articleRequest.getCategoryIds();
+      List<Category> categories = categoryRepository.findAllById(requestedIds);
+
+      List<Long> foundIds = categories.stream().map(Category::getId).toList();
+
+      List<Long> missingIds = requestedIds.stream().filter(id -> !foundIds.contains(id)).toList();
+
+      if (!missingIds.isEmpty()) {
+        throw new NotFoundException("Categories not found: " + missingIds);
+      }
+
       for (Category category : categories) {
         CategoryArticleId id = new CategoryArticleId(savedArticle.getArticleId(), category.getId());
         CategoryArticle categoryArticle =
@@ -124,5 +140,52 @@ public class ArticleServiceImpl implements ArticleService {
     // Return as APIResponse
     return new APIResponse<>(
         "Get article successfully", articleResponse, HttpStatus.OK, LocalDateTime.now());
+  }
+
+  @Override
+  public APIResponse<ArticleResponse> updateArticleById(
+      Long articleId, ArticleRequest articleRequest) {
+    if (!authUtil.getCurrentUserRole().equalsIgnoreCase("AUTHOR")) {
+      throw new NotFoundException("Not an Author");
+    }
+
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new NotFoundException("Article not found with id: " + articleId));
+
+    article.setTitle(articleRequest.getTitle());
+    article.setDescription(articleRequest.getDescription());
+
+    if (articleRequest.getCategoryIds() != null) {
+      if (articleRequest.getCategoryIds().isEmpty()) {
+        throw new BadRequestException("At least one category is required");
+      }
+
+      List<Long> requestedIds = articleRequest.getCategoryIds();
+      List<Category> categories = categoryRepository.findAllById(requestedIds);
+
+      List<Long> foundIds = categories.stream().map(Category::getId).toList();
+      List<Long> missingIds = requestedIds.stream().filter(id -> !foundIds.contains(id)).toList();
+
+      if (!missingIds.isEmpty()) {
+        throw new NotFoundException("Categories not found: " + missingIds);
+      }
+
+      article.getArticleCategories().clear();
+
+      for (Category category : categories) {
+        CategoryArticleId id = new CategoryArticleId(article.getArticleId(), category.getId());
+        CategoryArticle categoryArticle =
+            CategoryArticle.builder().id(id).article(article).category(category).build();
+        article.getArticleCategories().add(categoryArticle);
+      }
+    }
+
+    Article updatedArticle = articleRepository.saveAndFlush(article);
+    ArticleResponse response = ArticleResponse.fromArticle(updatedArticle);
+
+    return new APIResponse<>(
+        "Article updated successfully", response, HttpStatus.OK, LocalDateTime.now());
   }
 }
