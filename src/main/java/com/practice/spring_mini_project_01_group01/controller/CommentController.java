@@ -1,5 +1,6 @@
 package com.practice.spring_mini_project_01_group01.controller;
 
+import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.commet.CommentRequest;
 import com.practice.spring_mini_project_01_group01.dto.commet.CommentResponse;
 import com.practice.spring_mini_project_01_group01.service.CommentService;
@@ -17,20 +18,20 @@ public class CommentController {
 
   @Operation(summary = "Get comment by comment id, can view only your own comment")
   @GetMapping("/{commentId}")
-  private CommentResponse getCommentById(@PathVariable("commentId") Long commentId) {
+  private APIResponse<CommentResponse> getCommentById(@PathVariable("commentId") Long commentId) {
     return commentService.getCommentById(commentId);
   }
 
   @Operation(summary = "Update comment by comment id, can update only your own comment")
   @PutMapping("/{commentId}")
-  private CommentResponse updateComment(
+  private APIResponse<CommentResponse> updateComment(
       @PathVariable("commentId") Long commentId, @RequestBody CommentRequest commentRequest) {
     return commentService.updateComment(commentId, commentRequest);
   }
 
   @Operation(summary = "Delete comment by comment id, can delete only your own comment")
   @DeleteMapping("/{commentId}")
-  private void deleteComment(@PathVariable("commentId") Long commentId) {
-    commentService.deleteComment(commentId);
+  private APIResponse<CommentResponse> deleteComment(@PathVariable("commentId") Long commentId) {
+    return commentService.deleteComment(commentId);
   }
 }
