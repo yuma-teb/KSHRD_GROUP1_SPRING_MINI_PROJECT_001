@@ -1,7 +1,7 @@
 package com.practice.spring_mini_project_01_group01.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.practice.spring_mini_project_01_group01.dto.commet.CommentResponse;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentResponse;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.*;
@@ -32,7 +32,7 @@ public class Comment {
 
   @Builder.Default private LocalDateTime createdAt = LocalDateTime.now();
 
-  private LocalDateTime updatedAt;
+  @Builder.Default private LocalDateTime updatedAt = LocalDateTime.now();
 
   public CommentResponse toResponse() {
     return new CommentResponse(

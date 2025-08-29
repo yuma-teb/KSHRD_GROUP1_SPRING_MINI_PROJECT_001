@@ -1,8 +1,8 @@
 package com.practice.spring_mini_project_01_group01.controller;
 
 import com.practice.spring_mini_project_01_group01.dto.APIResponse;
-import com.practice.spring_mini_project_01_group01.dto.commet.CommentRequest;
-import com.practice.spring_mini_project_01_group01.dto.commet.CommentResponse;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentResponse;
 import com.practice.spring_mini_project_01_group01.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

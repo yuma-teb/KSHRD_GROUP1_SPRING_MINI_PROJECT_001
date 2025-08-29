@@ -1,6 +1,7 @@
 package com.practice.spring_mini_project_01_group01.dto.article;
 
 import com.practice.spring_mini_project_01_group01.model.Article;
+import com.practice.spring_mini_project_01_group01.model.Category;
 import com.practice.spring_mini_project_01_group01.model.CategoryArticle;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ArticleResponse {
     List<String> categoryNames =
         article.getArticleCategories().stream()
             .map(CategoryArticle::getCategory)
-            .map(category -> category.getCategoryName())
+            .map(Category::getCategoryName)
             .collect(Collectors.toList());
 
     return ArticleResponse.builder()

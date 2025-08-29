@@ -4,6 +4,7 @@ import com.practice.spring_mini_project_01_group01.common.enums.ArticleProperty;
 import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleRequest;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentArticleResponse;
 import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -14,7 +15,7 @@ public interface ArticleService {
   APIResponse<List<ArticleResponse>> findAll(
       int page, int size, ArticleProperty articleProperty, Sort.Direction direction);
 
-  ArticleResponse addComment(Long articleId, CommentRequest commentRequest);
+  APIResponse<CommentArticleResponse> addComment(Long articleId, CommentRequest commentRequest);
 
   APIResponse<Void> deteleArticle(Long articleId);
 

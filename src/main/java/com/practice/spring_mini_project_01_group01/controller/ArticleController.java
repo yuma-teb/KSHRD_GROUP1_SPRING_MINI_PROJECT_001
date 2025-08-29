@@ -4,8 +4,11 @@ import com.practice.spring_mini_project_01_group01.common.enums.ArticleProperty;
 import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleRequest;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentArticleResponse;
 import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
 import com.practice.spring_mini_project_01_group01.service.ArticleService;
+import com.practice.spring_mini_project_01_group01.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +22,12 @@ import org.springframework.web.bind.annotation.*;
 public class ArticleController {
 
   private final ArticleService articleService;
+  private final CommentService commentService;
 
   // Create article
   @PostMapping
   public ArticleResponse createArticle(@RequestBody ArticleRequest articleRequest) {
-    ArticleResponse savedArticle = articleService.save(articleRequest);
-    return savedArticle;
+    return articleService.save(articleRequest);
   }
 
   // Get Article
@@ -39,7 +42,10 @@ public class ArticleController {
 
   // Create comment specific article
   @PostMapping("/{articleId}/comments")
-  public ArticleResponse createComment(
+  @Operation(
+      summary =
+          "Comment on specific article, can be used to create comment on specific article by all roles")
+  public APIResponse<CommentArticleResponse> createComment(
       @PathVariable("articleId") Long articleId, @RequestBody CommentRequest commentRequest) {
     return articleService.addComment(articleId, commentRequest);
   }

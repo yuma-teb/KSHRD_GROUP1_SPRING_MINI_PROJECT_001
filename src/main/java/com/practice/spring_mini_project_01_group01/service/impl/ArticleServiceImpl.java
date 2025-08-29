@@ -5,12 +5,16 @@ import com.practice.spring_mini_project_01_group01.common.utils.AuthUtil;
 import com.practice.spring_mini_project_01_group01.dto.APIResponse;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleRequest;
 import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentArticleResponse;
 import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentResponse;
 import com.practice.spring_mini_project_01_group01.exception.NotFoundException;
 import com.practice.spring_mini_project_01_group01.model.*;
 import com.practice.spring_mini_project_01_group01.repository.ArticleRepository;
 import com.practice.spring_mini_project_01_group01.repository.CategoryRepository;
+import com.practice.spring_mini_project_01_group01.repository.CommentRepository;
 import com.practice.spring_mini_project_01_group01.service.ArticleService;
+import com.practice.spring_mini_project_01_group01.service.CommentService;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,7 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +36,8 @@ public class ArticleServiceImpl implements ArticleService {
   private final ArticleRepository articleRepository;
   private final CategoryRepository categoryRepository;
   private final AuthUtil authUtil;
+  private final CommentService commentService;
+  private final CommentRepository commentRepository;
 
   @Override
   public ArticleResponse save(ArticleRequest articleRequest) {
@@ -41,13 +46,11 @@ public class ArticleServiceImpl implements ArticleService {
       throw new NotFoundException("Not an Author");
     }
 
-    User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
     Article article =
         Article.builder()
             .title(articleRequest.getTitle())
             .description(articleRequest.getDescription())
-            .user(currentUser)
+            .user(authUtil.getCurrentUser())
             .articleCategories(new ArrayList<>())
             .build();
 
@@ -88,9 +91,24 @@ public class ArticleServiceImpl implements ArticleService {
         "Get all articles successfully.", articleResponses, HttpStatus.OK, LocalDateTime.now());
   }
 
-  @Override
-  public ArticleResponse addComment(Long articleId, CommentRequest commentRequest) {
-    return null;
+  public APIResponse<CommentArticleResponse> addComment(
+      Long articleId, CommentRequest commentRequest) {
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new NotFoundException("Article not found"));
+
+    commentService.createComment(article, commentRequest);
+
+    List<Comment> comments = commentRepository.findByUserId(authUtil.getCurrentUser().getId());
+
+    CommentArticleResponse response = new CommentArticleResponse();
+    response.setArticleResponse(article.getArticleResponse());
+    response.setComments(
+        comments.stream().map(CommentResponse::fromComment).collect(Collectors.toList()));
+
+    return new APIResponse<>(
+        "Comment article successfully", response, HttpStatus.OK, LocalDateTime.now());
   }
 
   @Override

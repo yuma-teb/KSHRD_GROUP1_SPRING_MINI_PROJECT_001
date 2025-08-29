@@ -1,5 +1,7 @@
 package com.practice.spring_mini_project_01_group01.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.practice.spring_mini_project_01_group01.dto.article.ArticleResponse;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,8 +42,27 @@ public class Article {
   private User user;
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private List<CategoryArticle> articleCategories = new ArrayList<>();
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private List<Comment> comments = new ArrayList<>();
+
+  public List<String> getCategoryNames() {
+    return this.articleCategories.stream()
+        .map(categoryArticle -> categoryArticle.getCategory().getCategoryName())
+        .toList();
+  }
+
+  public ArticleResponse getArticleResponse() {
+    return new ArticleResponse(
+        this.articleId,
+        this.title,
+        this.description,
+        this.user.getId(),
+        getCategoryNames(),
+        this.createdAt,
+        this.updatedAt);
+  }
 }

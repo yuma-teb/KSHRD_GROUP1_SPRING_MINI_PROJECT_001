@@ -2,8 +2,8 @@ package com.practice.spring_mini_project_01_group01.service.impl;
 
 import com.practice.spring_mini_project_01_group01.common.utils.AuthUtil;
 import com.practice.spring_mini_project_01_group01.dto.APIResponse;
-import com.practice.spring_mini_project_01_group01.dto.commet.CommentRequest;
-import com.practice.spring_mini_project_01_group01.dto.commet.CommentResponse;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentRequest;
+import com.practice.spring_mini_project_01_group01.dto.comment.CommentResponse;
 import com.practice.spring_mini_project_01_group01.exception.NotFoundException;
 import com.practice.spring_mini_project_01_group01.model.Article;
 import com.practice.spring_mini_project_01_group01.model.Comment;
@@ -27,7 +27,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public APIResponse<CommentResponse> getCommentById(Long commentId) {
-    User user = userRepository.findUserByEmail(authUtil.getCurrentUser().getUsername());
+    User user = authUtil.getCurrentUser();
 
     Comment comment =
         commentRepository
@@ -37,11 +37,11 @@ public class CommentServiceImpl implements CommentService {
         "Fetch My Comment Successfully", comment.toResponse(), HttpStatus.OK, LocalDateTime.now());
   }
 
-  public void createComment(String content, Article article) {
-    User user = userRepository.findUserByEmail(authUtil.getCurrentUser().getUsername());
+  public void createComment(Article article, CommentRequest commentRequest) {
+    User user = authUtil.getCurrentUser();
 
     Comment comment = new Comment();
-    comment.setContent(content);
+    comment.setContent(commentRequest.getContent());
     comment.setArticle(article);
     comment.setUser(user);
 
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
   @Override
   @Transactional
   public APIResponse<CommentResponse> updateComment(Long commentId, CommentRequest commentRequest) {
-    User user = userRepository.findUserByEmail(authUtil.getCurrentUser().getUsername());
+    User user = authUtil.getCurrentUser();
 
     Comment comment =
         commentRepository
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public APIResponse<CommentResponse> deleteComment(Long commentId) {
-    User user = userRepository.findUserByEmail(authUtil.getCurrentUser().getUsername());
+    User user = authUtil.getCurrentUser();
 
     Comment comment =
         commentRepository
